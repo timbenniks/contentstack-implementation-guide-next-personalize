@@ -2,7 +2,11 @@
 
 import Image from "next/image";
 import ContentstackLivePreview from "@contentstack/live-preview-utils";
-import { getPage, PersonalizeContext } from "@/lib/contentstack";
+import {
+  getPage,
+  initLivePreview,
+  PersonalizeContext,
+} from "@/lib/contentstack";
 import { useContext, useEffect, useState } from "react";
 import { Page } from "@/lib/types";
 import Personalize from "@contentstack/personalize-edge-sdk";
@@ -27,6 +31,7 @@ export default function Home({
   const PersonalizeInstance = useContext(PersonalizeContext);
 
   useEffect(() => {
+    initLivePreview();
     ContentstackLivePreview.onEntryChange(getContent);
 
     // send Personalize analytics impression for the experience with shortID '0'.
