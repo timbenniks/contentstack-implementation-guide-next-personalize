@@ -57,7 +57,6 @@ export async function getPage(url: string, variantParam: any) {
     .contentType('page')
     .entry()
 
-  pageQuery.addParams({ include_all: true });
   pageQuery.addParams({ include_dimension: true });
   pageQuery.addParams({ include_applied_variants: true });
 
