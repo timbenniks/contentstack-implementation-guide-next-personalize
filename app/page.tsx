@@ -12,11 +12,9 @@ import { Page } from "@/lib/types";
 import Personalize from "@contentstack/personalize-edge-sdk";
 import PersonalizeButton from "./components/PersonalizeButton";
 
-export default function Home(
-  props: {
-    searchParams: Promise<Record<string, string>>;
-  }
-) {
+export default function Home(props: {
+  searchParams: Promise<Record<string, string>>;
+}) {
   const searchParams = use(props.searchParams);
   const [page, setPage] = useState<Page>();
 
