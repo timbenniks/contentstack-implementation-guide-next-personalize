@@ -1,19 +1,23 @@
-import contentstack, { Region, QueryOperation } from '@contentstack/delivery-sdk'
+import contentstack, { QueryOperation } from '@contentstack/delivery-sdk'
 import ContentstackLivePreview, { IStackSdk } from '@contentstack/live-preview-utils';
 import { Page } from './types';
 import Personalize from '@contentstack/personalize-edge-sdk';
 import { createContext } from 'react';
+import { getContentstackEndpoints, getRegionForString } from "@timbenniks/contentstack-endpoints";
+
+const region = getRegionForString(process.env.NEXT_PUBLIC_CONTENTSTACK_REGION as string);
+const endpoints = getContentstackEndpoints(region, true)
 
 // Stack creation
 export const stack = contentstack.stack({
   apiKey: process.env.NEXT_PUBLIC_CONTENTSTACK_API_KEY as string,
   deliveryToken: process.env.NEXT_PUBLIC_CONTENTSTACK_DELIVERY_TOKEN as string,
   environment: process.env.NEXT_PUBLIC_CONTENTSTACK_ENVIRONMENT as string,
-  region: process.env.NEXT_PUBLIC_CONTENTSTACK_REGION === 'EU' ? Region.EU : Region.US,
+  region,
   live_preview: {
     enable: process.env.NEXT_PUBLIC_CONTENTSTACK_PREVIEW === 'true',
     preview_token: process.env.NEXT_PUBLIC_CONTENTSTACK_PREVIEW_TOKEN,
-    host: process.env.NEXT_PUBLIC_CONTENTSTACK_REGION === 'EU' ? 'eu-rest-preview.contentstack.com' : 'rest-preview.contentstack.com',
+    host: endpoints.preview,
   }
 });
 
@@ -29,19 +33,17 @@ export async function initLivePreview() {
       environment: process.env.NEXT_PUBLIC_CONTENTSTACK_ENVIRONMENT as string,
     },
     clientUrlParams: {
-      host:
-        process.env.NEXT_PUBLIC_CONTENTSTACK_REGION === 'EU'
-          ? 'eu-app.contentstack.com'
-          : 'app.contentstack.com',
+      host: endpoints.application,
     },
     editButton: {
       enable: true,
+      exclude: ["outsideLivePreviewPortal"]
     },
   });
 }
 
 // Personalize context creation
-const edgeApiUrl = process.env.NEXT_PUBLIC_CONTENTSTACK_REGION === 'EU' ? 'https://eu-personalize-edge.contentstack.com' : 'https://personalize-edge.contentstack.com'
+const edgeApiUrl = `https://${endpoints.personalizeEdge as string}`;
 const projectUid = process.env.NEXT_PUBLIC_CONTENTSTACK_P13N_PROJECT_ID as string;
 
 Personalize.setEdgeApiUrl(edgeApiUrl);
